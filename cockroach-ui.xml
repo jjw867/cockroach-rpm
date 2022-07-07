@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>cockroach-ui</short>
+  <description>Cockroach Database Server User Interface</description>
+  <port protocol="tcp" port="8080"/>
+</service>

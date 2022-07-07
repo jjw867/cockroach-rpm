@@ -1,0 +1,26 @@
+[Unit]
+Description=Cockroach SQL Database Server
+Requires=network.target
+Documentation=https://www.cockroachlabs.com/docs, man:cockroach(1)
+
+[Install]
+WantedBy=multi-user.target
+Alias=cockroach.service
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/cockroach/cockroach.conf
+PIDFile=/var/run/cockroach/pid
+
+ExecStart=/etc/cockroach/scripts/cockroach-start.sh
+ExecStop=/etc/cockroach/scripts/cockroach-stop.sh
+SyslogIdentifier=cockroach
+Restart=always
+RestartSec=10
+TimeoutStopSec=60
+RestartPreventExitStatus=0
+StandardOutput=syslog
+StandardError=syslog
+LimitNOFILE=65535
+User=cockroach
+Group=cockroach

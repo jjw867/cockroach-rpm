@@ -1,0 +1,4 @@
+# cockroach db server commands
+Cmnd_Alias COCKROACH_CMDS = /usr/bin/systemctl start cockroach, /usr/bin/systemctl stop cockroach, /usr/bin/systemctl status cockroach, /usr/bin/systemctl restart cockroach
+
+cockroach ALL=(ALL) NOPASSWD: COCKROACH_CMDS
