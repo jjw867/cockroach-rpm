@@ -16,6 +16,7 @@ Source3:          cockroach.conf
 Source4:          cockroach-logs.yaml
 Source5:          cockroach-server.xml
 Source6:          cockroach-ui.xml
+Source7:          cockroach.service
 Prefix:           %{_prefix}
 Packager:         Jeffrey White <jeffreyw@cockroachlabs.com>
 
@@ -55,7 +56,7 @@ install -d $RPM_BUILD_ROOT/%{_localstatedir}/log/%{name}
 install -d $RPM_BUILD_ROOT/%{_localstatedir}/run/%{name}
 
 mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT/usr/lib64
+mkdir -p $RPM_BUILD_ROOT/usr/local/lib/cockroach
 mkdir -p $RPM_BUILD_ROOT/usr/share/bash-completion/completions/cockroach
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/firewalld/services
 mkdir -p $RPM_BUILD_ROOT/%{_unitdir}
@@ -65,8 +66,8 @@ mkdir -p $RPM_BUILD_ROOT/usr/lib/python3.6/site-packages/sos/report/plugins
 cp $RPM_SOURCE_DIR/cockroach.py $RPM_BUILD_ROOT/usr/lib/python3.6/site-packages/sos/report/plugins
 
 cp $RPM_BUILD_DIR/%{name}-v%{version}.linux-amd64/cockroach $RPM_BUILD_ROOT/usr/bin/cockroach
-cp $RPM_BUILD_DIR/%{name}-v%{version}.linux-amd64/lib/libgeos_c.so $RPM_BUILD_ROOT/usr/lib64
-cp $RPM_BUILD_DIR/%{name}-v%{version}.linux-amd64/lib/libgeos.so $RPM_BUILD_ROOT/usr/lib64
+cp $RPM_BUILD_DIR/%{name}-v%{version}.linux-amd64/lib/libgeos_c.so $RPM_BUILD_ROOT/usr/local/lib/cockroach
+cp $RPM_BUILD_DIR/%{name}-v%{version}.linux-amd64/lib/libgeos.so $RPM_BUILD_ROOT/usr/local/lib/cockroach
 cp $RPM_SOURCE_DIR/cockroach-server.xml $RPM_BUILD_ROOT/%{_sysconfdir}/firewalld/services
 cp $RPM_SOURCE_DIR/cockroach-ui.xml $RPM_BUILD_ROOT/%{_sysconfdir}/firewalld/services
 cp $RPM_SOURCE_DIR/cockroach.conf $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/%{name}.conf
@@ -126,9 +127,8 @@ systemctl restart sshd
 %config(noreplace) %dir %attr(0750, cockroach, cockroach) %{_sysconfdir}/%{name}/certs
 %dir %attr(0755, cockroach, cockroach) %{_localstatedir}/run/%{name}
 /usr/bin/%{name}
-/usr/lib64/libgeos_c.so
-/usr/lib64/libgeos.so
-/usr/lib64/libgeos_c.so.1
+/usr/local/lib/cockroach/libgeos_c.so
+/usr/local/lib/cockroach/libgeos.so
 /etc/firewalld/services/*
 /etc/sudoers.d/50-cockroach
 %{_unitdir}/%{name}.service

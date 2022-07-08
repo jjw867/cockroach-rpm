@@ -1,0 +1,5 @@
+
+*.tgz
+*.rpm
+cockroach.py
+.DS_Store
