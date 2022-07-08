@@ -69,37 +69,98 @@ Some of these scripts are fairly obvious and possibly unnecessary.  But they mig
 
 ## SystemD Service
 
-We really try to make sure we have the time synchronized.  In the systemd service file we check and in the shell scripted called by the systemd service file.  
+We really try to make sure we have the time synchronized.  In the systemd service file we check and in the shell scripted called by the systemd service file.  We will also ensure we have enough file handles for our cockroach process.
 
 ## Start/Stop cockroach service
 
+From the cockroach user account:
+```
+[root@crdb1 cockroach]# su - cockroach
+[cockroach@crdb1 ~]$ id
+uid=988(cockroach) gid=983(cockroach) groups=983(cockroach) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[cockroach@crdb1 ~]$ sudo systemctl start cockroach
+[cockroach@crdb1 ~]$ sudo systemctl status cockroach
+● cockroach.service - Cockroach SQL Database Server
+   Loaded: loaded (/usr/lib/systemd/system/cockroach.service; disabled; vendor preset: disabled)
+   Active: active (running) since Fri 2022-07-08 10:03:38 CDT; 31min ago
+     Docs: https://www.cockroachlabs.com/docs,
+           man:cockroach(1)
+  Process: 45073 ExecStart=/etc/cockroach/scripts/cockroach-start.sh (code=exited, status=0/SUCCESS)
+  Process: 45071 ExecStartPre=/bin/chown -R cockroach:cockroach /var/run/cockroach (code=exited, status=0/SUCCESS)
+  Process: 45069 ExecStartPre=/bin/mkdir -p /var/run/cockroach (code=exited, status=0/SUCCESS)
+ Main PID: 45094 (cockroach)
+    Tasks: 10 (limit: 23642)
+   Memory: 302.6M
+   CGroup: /system.slice/cockroach.service
+           └─45094 /usr/bin/cockroach start --certs-dir=/etc/cockroach/certs --store=/var/lib/cockroach --cache=0.25 --max-sql-memory=0.25 --log-config-file=/etc/cockroach/cockroa>
+
+Jul 08 10:03:38 crdb1.home.white.nu systemd[1]: Starting Cockroach SQL Database Server...
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: *
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * INFO: initial startup completed.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Node will now attempt to join a running cluster, or wait for `cockroach init`.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Client connections will be accepted after this completes successfully.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Check the log file(s) for progress.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: *
+Jul 08 10:03:38 crdb1.home.white.nu systemd[1]: Started Cockroach SQL Database Server.
+[cockroach@crdb1 ~]$ sudo systemctl stop cockroach
+[cockroach@crdb1 ~]$ sudo systemctl status cockroach
+● cockroach.service - Cockroach SQL Database Server
+   Loaded: loaded (/usr/lib/systemd/system/cockroach.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+     Docs: https://www.cockroachlabs.com/docs,
+           man:cockroach(1)
+
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Node will now attempt to join a running cluster, or wait for `cockroach init`.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Client connections will be accepted after this completes successfully.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: * Check the log file(s) for progress.
+Jul 08 10:03:38 crdb1.home.white.nu cockroach[45094]: *
+Jul 08 10:03:38 crdb1.home.white.nu systemd[1]: Started Cockroach SQL Database Server.
+Jul 08 10:36:58 crdb1.home.white.nu systemd[1]: Stopping Cockroach SQL Database Server...
+Jul 08 10:36:58 crdb1.home.white.nu cockroach[45094]: initiating graceful shutdown of server
+Jul 08 10:37:01 crdb1.home.white.nu cockroach[45094]: server drained and shutdown completed
+Jul 08 10:37:01 crdb1.home.white.nu systemd[1]: cockroach.service: Succeeded.
+Jul 08 10:37:01 crdb1.home.white.nu systemd[1]: Stopped Cockroach SQL Database Server.
+
+```
+
 ## Accessing cockroach systemd logs
+
+```
+[cockroach@crdb1 ~]$ sudo journalctl -t cockroach
+-- Logs begin at Thu 2022-07-07 15:41:11 CDT, end at Fri 2022-07-08 10:45:00 CDT. --
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: *
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: * INFO: initial startup completed.
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: * Node will now attempt to join a running cluster, or wait for `cockroach init`.
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: * Client connections will be accepted after this completes successfully.
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: * Check the log file(s) for progress.
+Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: *
+```
 
 ## To Do
 
 - [ ] Fix it so it's not 22.1.2 specific.
 - [ ] Add cgroup, might be useful for segregating metrics.
 - [ ] Support running multiple instances for NUMA.  And no, turing off NUMA in the BIOS will not make NUMA go away.
-- [ ] Maybe get a script to distribute keys to new nodes, really an exercise for the end user's environment.
+- [ ] Maybe get a script to distribute keys to new nodes.  This might really be an exercise for the end user's environment.
 - [ ] Improve the stop process, I have concerns about going too fast to shutdown.
 - [ ] Script to retire this node?
 - [ ] SELinux support.
-- [ ] We assume we're using chrony for time synchronization.  It's possible NTP is being used.  We should also whine about using systemd for time sync.
+- [ ] We assume we're using chrony for time synchronization.  It's possible NTP is being used.  We should also whine about using systemd for time sync instead of chrony or NTP.
 - [ ] Eventually make this build process part of the factory that builds cockroach releases (* paging engineering *).
 - [ ] Test on RHEL 9 and RHEL 9 variants.
 - [ ] Test on more RHEL 8 variants.
 - [ ] Test on Fedora.
+- [ ] Make the SOS plugin its own package.
 
 ## Issues
 
 - [ ] The systemd service file needs more testing for edge cases.
 - [ ] Restart on failure in the systemd service file is either a bad idea or a good idea.
-- [ ] Something odd with the cockroach binary and the shell environment to get an SQL prompt is going sideways.  Need to investigate.
 - [ ] Only tested on RHEL 8 and Centos Stream 8.
 
 ## Testing needed
 
-- [ ] Needs more, you've been warned
+- [ ] More testing is needed, you've been warned.
 
 ## Possible future changes/fixes
 
