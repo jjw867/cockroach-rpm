@@ -1,8 +1,5 @@
 file-defaults:
   dir: /var/log/cockroach
-  max-file-size: 10MiB
-  max-group-size: 100MiB
-  file-permissions: 644
   buffered-writes: true
   filter: INFO
   format: crdb-v2

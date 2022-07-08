@@ -43,13 +43,14 @@ Things the package does:
 - Create a /var/lib/cockroach for cockroach database files to live.
 - Create (and recreate if needed) a /var/run/cockroach directorty to put a file with the PID of the process.
 
+By default, a single node database instance is created.  Which may not be what you want.  Edit the cockroach.conf file and change COCKROACH_START to start for multi-node clusters.
 ### /etc/cockroach
 
 This directory holds the configuration file (below), the log configuration yaml for the cockroach binary, a protected subdirectory for key certificates and a scripts directory.
 
 ### /etc/cockroach/cockroach.conf
 
-This file holds environment variables that drive a number of the scripts.  The idea is that the config file has sane values and gives on place to change them.
+This file holds environment variables that drive a number of the scripts.  The idea is that the config file has sane values and gives a central place to change them.
 
 ### /etc/cockroach/certs
 
@@ -151,6 +152,7 @@ Jul 08 10:03:06 crdb1.home.white.nu cockroach[10761]: *
 - [ ] Test on more RHEL 8 variants.
 - [ ] Test on Fedora.
 - [ ] Make the SOS plugin its own package.
+- [ ] Add more documentation on CRDB into the package.
 
 ## Issues
 
