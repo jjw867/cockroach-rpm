@@ -25,15 +25,17 @@ The spec file will pull the cockroach binary and the SOS plugin file.
 
 ## Design of the RPM
 
-Cockroach is by design made to be simple to install and run.  It's a single binary file.  To run on a typical operating system, some bits need to be added allow faster and perhaps a more consistent deployment.  The overall goal is to lower the friction to getting a database up and running.  Some of the pieces will be useful for mature operations teams to use.
+Cockroach is by design made to be simple to install and run.  It's a single binary file.  
+
+To run on a typical operating system, some bits need to be added allow a more consistent deployment.  The overall goal of the RPM is to lower the friction to getting a cockroach database up and running.  It is also designed to help put various pieces in sane places.  Some of the pieces will be useful for mature operations teams to use not necessarily using the package.
 
 Things the package does:
 - Puts the cockroach supplied libgeos library files into /usr/local/lib/cockroach.
 - Create the manual pages, and put them in man1 section.
 - Create the bash autocompletion script and put it in /usr/share/bash-completion/completions/cockroach.
 - Create a cockroach user and cockroach group.
-- Create a /home/cockroach location for the cockroach user, a place to park scripts etc.  It also helps to keep file ownership correct.
-- Allow the cockroach user in sudo start, stop and reload the database with systemctl.
+- Create a /home/cockroach location for the cockroach user, a place to park scripts etc.  It also helps to keep file ownership correct.  The idea is to su - cockroach to do cockroach database things.  This also simplifies security in environment where the DBA's to not have root priviledges.  
+- Allow the cockroach user in sudo start, stop and reload the database with systemctl.  
 - Block the cockroach user from being able to login from ssh.
 - Add firewalld xml file for the standard server port and standard user port.
 - Create an /etc/cockroach directory for storing important bits.
@@ -77,26 +79,27 @@ We really try to make sure we have the time synchronized.  In the systemd servic
 
 - [ ] Fix it so it's not 22.1.2 specific.
 - [ ] Add cgroup, might be useful for segregating metrics.
-- [ ] Support running multiple instances for NUMA.  And no, turing it off in the BIOS will not resolve NUMA being a performance hit.
+- [ ] Support running multiple instances for NUMA.  And no, turing off NUMA in the BIOS will not make NUMA go away.
 - [ ] Maybe get a script to distribute keys to new nodes, really an exercise for the end user's environment.
 - [ ] Improve the stop process, I have concerns about going too fast to shutdown.
 - [ ] Script to retire this node?
-- [ ] SELinux support
+- [ ] SELinux support.
 - [ ] We assume we're using chrony for time synchronization.  It's possible NTP is being used.  We should also whine about using systemd for time sync.
-- [ ] Eventually make this build process part of the factory that builds cockroach releases (* paging engineering *)
-- [ ] Test on RHEL 9 and RHEL 9 variants
-- [ ] Test on more RHEL 8 variants
-- [ ] Test on Fedora
+- [ ] Eventually make this build process part of the factory that builds cockroach releases (* paging engineering *).
+- [ ] Test on RHEL 9 and RHEL 9 variants.
+- [ ] Test on more RHEL 8 variants.
+- [ ] Test on Fedora.
 
 ## Issues
 
 - [ ] The systemd service file needs more testing for edge cases.
 - [ ] Restart on failure in the systemd service file is either a bad idea or a good idea.
 - [ ] Something odd with the cockroach binary and the shell environment to get an SQL prompt is going sideways.  Need to investigate.
-- [ ] Only tested on RHEL 8 and Centos Stream 8
+- [ ] Only tested on RHEL 8 and Centos Stream 8.
 
 ## Testing needed
 
+- [ ] Needs more, you've been warned
 
 ## Possible future changes/fixes
 
@@ -106,5 +109,4 @@ We really try to make sure we have the time synchronized.  In the systemd servic
 - [ ] Better edge case detections.
 - [ ] There are a lot of possible more customized configurations that are easier made by simply editing the files.
 - [ ] Backporting to support 21.2, doing this might not be worth the effort.
-
-
+- [ ] Need a Debian/Ubuntu .deb package, but that is for another repository.
