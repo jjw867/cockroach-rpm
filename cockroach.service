@@ -11,10 +11,11 @@ Alias=cockroach.service
 
 [Service]
 Type=forking
+PrivateTmp=yes
 EnvironmentFile=/etc/cockroach/cockroach.conf
+RuntimeDirectory=cockroach
+RuntimeDirectoryMode=755
 PIDFile=/var/run/cockroach/pid
-ExecStartPre=/bin/mkdir -p /var/run/cockroach
-ExecStartPre=/bin/chown -R cockroach:cockroach /var/run/cockroach
 ExecStart=/etc/cockroach/scripts/cockroach-start.sh
 ExecStop=/etc/cockroach/scripts/cockroach-stop.sh
 SyslogIdentifier=cockroach
