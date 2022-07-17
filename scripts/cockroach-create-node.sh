@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
+set -o allexport
 source /etc/cockroach/cockroach.conf
+set +o allexport
 
 # get the default IP address of this node
 IP_ADDR=$(ip route get 1 | awk '{print $(NF-2);exit}')

@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
+set -o allexport
 source /etc/cockroach/cockroach.conf
+set +o allexport
 
 echo "Enabling CockroachDB on port 26257"
 firewall-cmd --add-service=cockroach-server --permanent

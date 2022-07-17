@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
+set -o allexport
 source /etc/cockroach/cockroach.conf
+set +o allexport
 
 TimeSync=$(timedatectl | awk '/System clock synchronized/{print $NF}')
 if [ $TimeSync == "no" ]; then
@@ -35,5 +37,6 @@ else
                                         --http-addr=$COCKROACH_UI_PORT \
 					--pid-file=/var/run/cockroach/pid \
 					--join=$COCKROACH_JOIN_HOSTS \
+                                        --locality=$COCKROACH_LOCALITY \
                                         --background
 fi
