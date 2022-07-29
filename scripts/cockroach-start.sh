@@ -33,7 +33,7 @@ else
                                         --max-sql-memory=$COCKROACH_SQL_MEMORY \
                                         --log-config-file=$COCKROACH_LOG_CONFIG \
                                         --advertise-addr=$COCKROACH_ADVERTISE \
-					--listen-addr=$COCKROACH_ADVERTISE \
+					--listen-addr=$COCKROACH_LISTEN \
                                         --http-addr=$COCKROACH_UI_PORT \
 					--pid-file=/var/run/cockroach/pid \
 					--join=$COCKROACH_JOIN_HOSTS \
